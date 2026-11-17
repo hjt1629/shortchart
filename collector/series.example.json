@@ -1,0 +1,28 @@
+[
+  {
+    "id": "contract-marriage",
+    "title": "작품 제목 (사이트에 표시될 이름)",
+    "type": "drama",
+    "genres": ["로맨스", "재벌"],
+    "playlist": "https://www.youtube.com/playlist?list=여기에_재생목록_ID",
+    "synopsis": "한두 줄 줄거리 (비우면 1화 영상 설명 첫 줄을 사용)"
+  },
+  {
+    "id": "taxi-4am",
+    "title": "숏필름 제목",
+    "type": "movie",
+    "genres": ["스릴러"],
+    "videos": ["https://www.youtube.com/shorts/여기에_영상_ID"]
+  },
+  {
+    "id": "no-playlist-drama",
+    "title": "재생목록이 없는 드라마는 회차 영상을 순서대로 나열",
+    "type": "drama",
+    "genres": ["복수"],
+    "status": "연재중",
+    "videos": [
+      "https://www.youtube.com/shorts/1화_영상_ID",
+      "https://www.youtube.com/shorts/2화_영상_ID"
+    ]
+  }
+]

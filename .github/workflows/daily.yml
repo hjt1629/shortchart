@@ -1,0 +1,75 @@
+name: 매일 조회수 수집 & 사이트 배포
+
+on:
+  schedule:
+    - cron: "0 21 * * *"   # 매일 06:00 (한국 시간). GitHub 사정으로 몇 분~수십 분 늦어질 수 있음
+  workflow_dispatch:         # Actions 탭에서 "Run workflow" 버튼으로 바로 실행
+  push:
+    branches: [main]         # 코드 수정 시: 수집 없이 기존 기록으로 다시 배포
+
+permissions:
+  contents: write   # 스냅샷 커밋
+  pages: write      # GitHub Pages 배포
+  id-token: write
+
+concurrency:
+  group: collect-and-deploy
+  cancel-in-progress: false
+
+jobs:
+  collect-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 조회수 수집
+        if: github.event_name != 'push'
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: |
+          if [ -z "$YOUTUBE_API_KEY" ]; then
+            echo "::warning::YOUTUBE_API_KEY 시크릿이 없어 수집을 건너뜁니다 (Settings → Secrets and variables → Actions 에 등록)"
+            node collector/collect.mjs --build-only
+          else
+            node collector/collect.mjs
+          fi
+
+      - name: 기존 기록으로 데이터 빌드
+        if: github.event_name == 'push'
+        run: node collector/collect.mjs --build-only
+
+      - name: 조회수 기록 커밋
+        if: github.event_name != 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/snapshots 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "새 기록 없음"
+          else
+            git commit -m "data: 조회수 기록 $(TZ=Asia/Seoul date +%F)"
+            git pull --rebase
+            git push
+          fi
+
+      - name: 사이트 파일 묶기 (.env, 수집기 등은 제외)
+        run: |
+          mkdir -p _site/data
+          cp index.html styles.css app.js data.js _site/
+          if [ -f data/live-data.js ]; then cp data/live-data.js _site/data/; fi
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4

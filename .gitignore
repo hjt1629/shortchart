@@ -1,0 +1,8 @@
+.env
+node_modules/
+.DS_Store
+# CI에서 매번 다시 만드는 파일 (기록은 data/snapshots 에 커밋됨)
+data/live-data.js
+data/collect.log
+_site/
+.claude/

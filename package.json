@@ -1,0 +1,12 @@
+{
+  "name": "shortchart",
+  "private": true,
+  "type": "module",
+  "description": "숏폼 드라마·숏필름 조회수 랭킹 사이트",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "collect": "node collector/collect.mjs",
+    "build-data": "node collector/collect.mjs --build-only",
+    "dev": "python3 -m http.server 5173"
+  }
+}

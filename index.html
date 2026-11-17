@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>숏차트 · 숏폼 드라마·영화 랭킹</title>
+  <meta name="description" content="유튜브 쇼츠, 인스타그램 릴스, 틱톡, 숏드라마 앱에 흩어진 숏폼 드라마와 숏필름을 한곳에서 랭킹으로." />
+  <meta name="theme-color" content="#0d0d12" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="#/" class="logo"><span class="logo-mark">▶</span>숏차트</a>
+      <nav class="topnav">
+        <a href="#/" data-nav="home">홈</a>
+        <a href="#/ranking" data-nav="ranking">랭킹</a>
+        <a href="#/wish" data-nav="wish">보고싶어요</a>
+      </nav>
+      <form class="search" id="searchForm" role="search">
+        <input id="searchInput" type="search" placeholder="작품, 채널, 장르 검색" autocomplete="off" />
+      </form>
+    </div>
+  </header>
+
+  <main id="app" class="container"></main>
+
+  <nav class="bottomnav">
+    <a href="#/" data-nav="home"><span>⌂</span>홈</a>
+    <a href="#/ranking" data-nav="ranking"><span>♛</span>랭킹</a>
+    <a href="#/search" data-nav="search"><span>⌕</span>검색</a>
+    <a href="#/wish" data-nav="wish"><span>♥</span>보관함</a>
+  </nav>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="data.js"></script>
+  <!-- collector/collect.mjs 가 만드는 실제 데이터. 파일이 없으면 샘플 데이터로 표시 -->
+  <script src="data/live-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
