@@ -68,6 +68,29 @@ const CONTENTS = TITLES.map((t, i) => {
   };
 });
 
+// 샘플용 부가 데이터: 최근 14일 일간 조회수 추이, 회차별 조회수(완주율 계산용)
+CONTENTS.forEach((c, i) => {
+  const r = (k) => seeded(i * 31 + k + 100);
+  const perDay = Math.pow(1 + c.growth / 100, 1 / 7);
+  c.trend = Array.from({ length: 14 }, (_, d) =>
+    Math.round((c.views.daily / Math.pow(perDay, 13 - d)) * (0.88 + r(d) * 0.24)));
+  c.trend[13] = c.views.daily;
+
+  if (c.type === "drama") {
+    const target = 0.22 + r(50) * 0.5;                    // 마지막 화 ÷ 1화
+    const k = Math.pow(target, 1 / (c.episodes - 1));
+    const ep1 = (c.views.total * (1 - k)) / (1 - Math.pow(k, c.episodes));
+    c.episodeList = Array.from({ length: c.episodes }, (_, n) => ({
+      n: n + 1,
+      title: `${c.title} ${n + 1}화`,
+      views: Math.round(ep1 * Math.pow(k, n) * (n === 0 ? 1 : 0.93 + r(60 + n) * 0.1)),
+      len: c.epLength,
+      url: null,
+    }));
+    c.completion = c.episodeList.at(-1).views / c.episodeList[0].views;
+  }
+});
+
 // 리뷰 샘플
 const SAMPLE_REVIEWS = [
   { user: "정주행러", stars: 5, text: "출퇴근길에 한 편씩 보다가 결국 새벽까지 정주행했어요. 1분짜리인데 끊는 타이밍이 미쳤음." },

@@ -223,6 +223,13 @@ async function build() {
       views[k] = delta(cur, base);
       prevViews[k] = base ? delta(base, at(n * 2)) : null;
     }
+    // 최근 14일 일간 증가 조회수 추이 (스파크라인용)
+    const trend = [];
+    for (let d = 13; d >= 0; d--) {
+      const a = points.find((p) => p.day === cur.day - d);
+      const b = points.find((p) => p.day === cur.day - d - 1);
+      if (a && b) trend.push(Math.max(0, a.entry.total - b.entry.total));
+    }
     const growth = views.weekly != null && prevViews.weekly ? Math.round((views.weekly / prevViews.weekly - 1) * 100) : null;
 
     const e = cur.entry;
@@ -257,7 +264,7 @@ async function build() {
       status: type === "movie" ? "공개" : cfg?.status || (now - lastPub <= 14 * 86400000 ? "연재중" : "완결"),
       episodes: eps.length,
       epLength: type === "drama" ? `약 ${fmtLen(avgSec)}` : fmtLen(avgSec),
-      views, prevViews, growth, completion,
+      views, prevViews, growth, completion, trend,
       likes: e.likes,
       comments: e.comments,
       rating: null, ratingCount: 0, wish: 0,
